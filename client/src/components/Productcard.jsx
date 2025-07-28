@@ -1,6 +1,6 @@
 import Genbutton from "./Genbutton";
 
-export default function Productcart(){
+export default function Productcard(){
     return (
         <div className="w-[268px] bg-[#EDEDED] h-[432px] flex-col flex justify-around items-center rounded-lg ">
             <br />

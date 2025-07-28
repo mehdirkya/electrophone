@@ -2,7 +2,7 @@ import { useState } from "react";
 import Specs from "../components/specs";
 import Genbutton from "../components/Genbutton";
 import Randomcomp from "../components/randomcomp";
-import Productcart from "../components/Productcart";
+import Productcart from "../components/Productcard";
 
 export default function Productdetail() {
   const [expanded, setExpanded] = useState(false);
@@ -68,10 +68,10 @@ export default function Productdetail() {
             <div className="flex flex-col gap-7">
                 <h1 className="font-Inter font-medium text-[24px]">Related Products</h1>
                 <div className="flex justify-center items-center gap-4">      
-                    <Productcart />
-                    <Productcart />
-                    <Productcart />
-                    <Productcart />
+                    <Productcard/>
+                    <Productcard/>
+                    <Productcard/>
+                    <Productcard/>
                 </div>
             </div>
         </div>

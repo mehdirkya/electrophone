@@ -2,7 +2,7 @@ import React from "react";
 import CategoryCard from "../components/CategoryCard";
 import Button from "../components/Button";
 import Bannercomp from"../components/Bannercomp";
-import Productcart from "../components/Productcart";
+import Productcard from "../components/Productcard";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
@@ -168,14 +168,14 @@ export default function Home() {
         <div className="flex-col flex gap-7">
           <h3 className="text-[22px] font-medium font-Inter underline underline-offset-5">New Arrival</h3>
           <div className="w-[1120px] h-[880px] grid grid-cols-4 gap-4">
-            <Productcart />
-            <Productcart />
-            <Productcart />
-            <Productcart />
-            <Productcart />
-            <Productcart />
-            <Productcart />
-            <Productcart />
+            <Productcard/>
+            <Productcard/>
+            <Productcard/>
+            <Productcard/>
+            <Productcard/>
+            <Productcard/>
+            <Productcard/>
+            <Productcard/>
           </div>
         </div>
         
