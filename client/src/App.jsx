@@ -13,27 +13,28 @@ import Payment from "./pages/Payment";
 import Profile from "./pages/Profile";
 import Products from "./pages/Products";
 
-
 export default function App() {
   return (
-    <div className="min-h-screen  overflow-x-hidden">
+    <div className="min-h-screen flex flex-col overflow-x-hidden">
       <Navbar />
-      <main >
+      
+      {/* Main content area that grows to fill available space */}
+      <main className="flex-grow">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/admin" element={<AdminRoute />} />
-          <Route path="/login" element={<Login/>} />
-          <Route path="/Shoppingcart" element={<Shoppingcart/>} />
-          <Route path="/Productdetail" element={<Productdetail/>} />
-          <Route path="/Products" element={<Products/>} />
-          <Route path="/Payment" element={<Payment/>} />
-          <Route path="/Profile" element={<Profile/>} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/Shoppingcart" element={<Shoppingcart />} />
+          <Route path="/Productdetail" element={<Productdetail />} />
+          <Route path="/Products" element={<Products />} />
+          <Route path="/Payment" element={<Payment />} />
+          <Route path="/Profile" element={<Profile />} />
         </Routes>
       </main>
+
       <Footer />
     </div>
   );
 }
-

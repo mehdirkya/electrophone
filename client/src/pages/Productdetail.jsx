@@ -2,7 +2,7 @@ import { useState } from "react";
 import Specs from "../components/specs";
 import Genbutton from "../components/Genbutton";
 import Randomcomp from "../components/randomcomp";
-import Productcart from "../components/Productcard";
+import Productcard from "../components/Productcard";
 
 export default function Productdetail() {
   const [expanded, setExpanded] = useState(false);

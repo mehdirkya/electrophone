@@ -1,7 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import Genbutton from "../components/Genbutton";
 import Input from "../components/Input";
-import React, { useState } from "react";
+import React, { useState , useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 export default function Profile(){
 
@@ -14,6 +15,7 @@ export default function Profile(){
       const [state, setState] = useState("");
       const [zipCode, setZipCode] = useState("");
       const navigate = useNavigate();
+      const { logout } = useContext(AuthContext);
     
     
       // Handlers for each input
@@ -132,15 +134,18 @@ export default function Profile(){
                     hover="hover:bg-gray-900"
                 />
                 <Genbutton
+                    type="button"  // Prevents form submit
                     w="w-[290px]"
                     h="h-[64px]"
                     bg="bg-white"
-                    text="Leave"
+                    text="Logout"
                     textsz="text-[14px]"
                     textco="text-black"
                     hover="hover:bg-gray-100"
-                    onClick={() => navigate("/")}
-                />
+                    onClick={() => {
+                        logout();         // removes token & updates context
+                        navigate("/"); // redirect to login
+                    }}/>
                 </div>
             </form>
             </div>

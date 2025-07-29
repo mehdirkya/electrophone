@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState , useContext} from "react";
 import Input from "../components/Input";
 import Genbutton from "../components/Genbutton";
 import { useNavigate } from "react-router-dom";
-
+import { AuthContext } from "../context/AuthContext";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -10,12 +10,33 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const handleEmailChange = (e) => setEmail(e.target.value);
   const handlePasswordChange = (e) => setPassword(e.target.value);
+  const { login } = useContext(AuthContext);
+
   const width = "w-[573px]"
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Login with:", { email, password });
-    // TODO: call login API
-  };
+
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    const res = await fetch("http://localhost:5000/api/users/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await res.json(); // ✅ Parse once
+
+    if (res.ok) {
+      login(data.token); // ✅ Use the already-parsed token
+      navigate("/");     // ✅ Redirect
+    } else {
+      console.error("Login failed:", data.message);
+      alert(data.message);
+    }
+  } catch (err) {
+    console.error("Error logging in:", err);
+  }
+};
 
   return (
     <div className="h-[670px] w-full bg-white flex flex-col justify-center items-center px-6 py-12">

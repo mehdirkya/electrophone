@@ -28,10 +28,43 @@ export default function SignupPage() {
 
   const width = "w-[786px]";
 
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    const res = await fetch("http://localhost:5000/api/users/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email,
+        password,
+        phone,
+        country,
+        address,
+        city,
+        state,
+        zipcode: zipCode,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      console.log("Registration successful:", data);
+      navigate("/login");
+    } else {
+      console.error("Registration failed:", data.message);
+      alert(data.message);
+    }
+  } catch (err) {
+    console.error("Error registering user:", err);
+  }
+};
+
   return (
     <div className="h-[900px] w-full bg-white flex flex-col justify-center items-center px-6 py-12">
       <div className="w-full max-w-3xl">
-        <form className="flex-col flex gap-6">
+        <form className="flex-col flex gap-6" onSubmit={handleSubmit}>
           <label htmlFor="" className="text-[18px] font-semibold font-Inter">Account Infomration</label>
           <div className="flex flex-col gap-3">
             {/* Email */}

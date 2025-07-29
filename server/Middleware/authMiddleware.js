@@ -1,20 +1,20 @@
-const jwt = require("jsonwebtoken");
+import jwt from "jsonwebtoken";
 
-exports.verifyAdmin = (req, res, next) => {
+export const protect = (req, res, next) => {
   const authHeader = req.headers.authorization;
-  if (!authHeader) return res.status(401).json({ message: "Token manquant" });
+
+  // Check if Authorization header exists and starts with "Bearer"
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "Not authorized, no token provided" });
+  }
 
   const token = authHeader.split(" ")[1];
-  if (!token) return res.status(401).json({ message: "Token manquant" });
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    if (decoded.role !== "admin")
-      return res.status(403).json({ message: "Accès refusé" });
-
-    req.user = decoded;
-    next();
-  } catch (error) {
-    return res.status(401).json({ message: "Token invalide" });
+    req.user = { id: decoded.userId };
+    next(); // pass control to next middleware/route handler
+  } catch (err) {
+    return res.status(401).json({ message: "Token is invalid or expired" });
   }
 };
