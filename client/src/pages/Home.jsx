@@ -34,7 +34,7 @@ export default function Home() {
           >
             Pro.Beyond.
           </h3>
-          <h1 className="text-white text-[96px] font-thin leading-tight font-Inter">
+          <h1 className="text-white text-[96px] font-thin leading-tight font-Inter ">
             <span className="tracking-[0.05em]">IPhone 14</span>{" "}
             <span className="font-semibold">Pro</span>
           </h1>

@@ -61,7 +61,7 @@ export const loginUser = async (req, res) => {
         phone: user.phone,
         country: user.country,
         address: user.address,
-        zipcode: user.zipcode,
+        zipCode: user.zipcode,
         city: user.city,
         state: user.state,
       },

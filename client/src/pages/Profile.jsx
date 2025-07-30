@@ -1,12 +1,15 @@
 import { useNavigate } from "react-router-dom";
 import Genbutton from "../components/Genbutton";
 import Input from "../components/Input";
-import React, { useState , useContext } from "react";
+import React, { useState , useContext , useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
+import axios from "axios";
+
 
 export default function Profile(){
-
-    const [email, setEmail] = useState("");
+    
+    const [isEditingAccountInfo, setIsEditingAccountInfo] = useState(false);
+      const [email, setEmail] = useState("");
       const [password, setPassword] = useState("");
       const [phone, setPhone] = useState("");
       const [country, setCountry] = useState("");
@@ -15,8 +18,45 @@ export default function Profile(){
       const [state, setState] = useState("");
       const [zipCode, setZipCode] = useState("");
       const navigate = useNavigate();
-      const { logout } = useContext(AuthContext);
-    
+      const handleLogout = () => {
+  logout(); // from AuthContext
+  navigate("/login"); // redirect after logout
+};
+      
+    useEffect(() => {
+  const fetchProfile = async () => {
+    try {
+      const token = localStorage.getItem("token"); // or from AuthContext if stored there
+
+      if (!token) {
+        console.warn("No token found");
+        return;
+      }
+
+      const res = await axios.get("http://localhost:5000/api/users/profile", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }); 
+
+      const data = res.data;
+
+      // Fill states from data
+      setEmail(data.email || "");
+      setPhone(data.phone || "");
+      setCountry(data.country || "");
+      setAddress(data.address || "");
+      setCity(data.city || "");
+      setState(data.state || "");
+      setZipCode(data.zipCode || "");
+    } catch (error) {
+      console.error("Failed to fetch profile:", error);
+    }
+  };
+
+  fetchProfile();
+}, []);
+
     
       // Handlers for each input
       const handleEmailChange = (e) => setEmail(e.target.value);
@@ -28,127 +68,146 @@ export default function Profile(){
       const handleStateChange = (e) => setState(e.target.value);
       const handleZipCodeChange = (e) => setZipCode(e.target.value);
 
-    const width = "w-[786px]";
+    const { user, logout } = useContext(AuthContext);
+
+    
+  useEffect(() => {
+  const fetchProfile = async () => {
+    try {
+      const token = localStorage.getItem("token"); // or from context
+      const res = await axios.get("http://localhost:5000/api/users/profile", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = res.data;
+
+      setEmail(data.email);
+      setPhone(data.phone);
+      setCountry(data.country);
+      setAddress(data.address);
+      setCity(data.city);
+      setState(data.state);
+      setZipCode(data.zipCode);
+      // Password should not come from API directly
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+    }
+  };
+
+  fetchProfile();
+}, []);
+
 
     return(
-        <div className="h-[900px] w-full bg-white flex flex-col justify-center items-center px-6 py-12">
-            <div className="w-full max-w-3xl">
-            <form className="flex-col flex gap-6">
-                <label htmlFor="" className="text-[18px] font-semibold font-Inter">Account Infomration</label>
-                <div className="flex flex-col gap-3">
-                {/* Email */}
-                <Input
-                    name="Email"
-                    type="email"
-                    value={email}
-                    onChange={handleEmailChange}
-                    placeholder="Enter your email"
-                    w={width}
-                />
-    
-                {/* Password */}
-                <Input
-                    name="Password"
-                    type="password"
-                    value={password}
-                    onChange={handlePasswordChange}
-                    placeholder="Enter your password"
-                    w={width}
-                />
-    
-                {/* Phone */}
-                <Input
-                    name="Phone"
-                    type="tel"
-                    value={phone}
-                    onChange={handlePhoneChange}
-                    placeholder="Enter your phone number"
-                    w={width}
-                />
+        <div className="h-[1500px] w-full bg-white flex flex-col justify-center items-center  gap-6">
+            <div className="w-[40%] flex justify-between ">
+                <div className="flex gap-3">   
+                    <img src="/personal-information.png" className="w-[24px] h-[24px]" alt="" />
+                    <h1 className="text-[18px] font-semibold font-Inter ">  Account Information : </h1> 
                 </div>
-                <div className="flex gap-2">
-                <label htmlFor="" className="text-[18px] font-semibold font-Inter">Billing Address</label>
-                <img src="/addressicon.png" alt="" />
-                </div>
-                <div className="flex flex-col gap-3">
-                {/* Country */}
-                <Input
-                    name="Country"
-                    type="text"
-                    value={country}
-                    onChange={handleCountryChange}
-                    placeholder="Enter your country"
-                    w={width}
-                />
-    
-                {/* Address */}
-                <Input
-                    name="Address"
-                    type="text"
-                    value={address}
-                    onChange={handleAddressChange}
-                    placeholder="Enter your address"
-                    w={width}
-                />
-    
-                {/* City */}
-                <Input
-                    name="City"
-                    type="text"
-                    value={city}
-                    onChange={handleCityChange}
-                    placeholder="Enter your city"
-                    w={width}
-                />
-    
-                {/* State */}
-                <Input
-                    name="State"
-                    type="text"
-                    value={state}
-                    onChange={handleStateChange}
-                    placeholder="Enter your state"
-                    w={width}
-                />
-    
-                {/* Zip Code */}
-                <Input
-                    name="Zip Code"
-                    type="text"
-                    value={zipCode}
-                    onChange={handleZipCodeChange}
-                    placeholder="Enter your zip code"
-                    w={width}
-                />
-                </div>
-                {/* Buttons */}
-                <div className="w-full flex justify-center items-center gap-5">
-                <Genbutton
-                    type="submit"
-                    w="w-[290px]"
-                    h="h-[64px]"
-                    bg="bg-black"
-                    text="Change"
-                    textsz="text-sm"
-                    textco="text-white"
-                    hover="hover:bg-gray-900"
-                />
-                <Genbutton
-                    type="button"  // Prevents form submit
-                    w="w-[290px]"
-                    h="h-[64px]"
-                    bg="bg-white"
-                    text="Logout"
-                    textsz="text-[14px]"
-                    textco="text-black"
-                    hover="hover:bg-gray-100"
-                    onClick={() => {
-                        logout();         // removes token & updates context
-                        navigate("/"); // redirect to login
-                    }}/>
-                </div>
-            </form>
+                <img src="/editicon.png" alt="edit" className="w-[28px] h-[28px] cursor-pointer active:scale-90 transition ease-in-out" onClick={() => setIsEditingAccountInfo(true)}/>
+
             </div>
+            {/* Account Information Block */}
+            <div className="w-full max-w-3xl flex flex-col gap-10 border border-gray-300 rounded-2xl justify-center items-center">
+                    <div className="flex h-[350px] gap-5 w-[600px]">
+                        {/* Left column: Labels */}
+                        <div className="flex flex-col justify-around w-[fit] h-full">
+                            <h1 className="font-inter font-semibold text-[20px] h-[60px]">Email :</h1>
+                            <h1 className="font-inter font-semibold text-[20px] h-[60px]">Password :</h1>
+                            <h1 className="font-inter font-semibold text-[20px] h-[60px]">Phone :</h1>
+                        </div>
+                          
+
+                    <div className="flex flex-col justify-around w-[300px] h-full">
+                    {/* Always show email (non-editable) */}
+                    <p className="font-inter font-normal text-[18px] h-[60px]" id="email">{email}</p>
+
+                    {isEditingAccountInfo ? (
+                        <>
+                        {/* Editable Fields */}
+                        <Input
+                            w="w-[300px]"
+                            type="password"
+                            value={password}
+                            onChange={handlePasswordChange}
+                            name="New Password"
+                        />
+                        <Input
+                            w="w-[300px]"
+                            value={phone}
+                            onChange={handlePhoneChange}
+                            name="Phone"
+                        />
+                        </>
+                    ) : (
+                        <>
+                        <p className="font-inter font-normal text-[18px] h-[60px]" id="password">********</p>
+                        <p className="font-inter font-normal text-[18px] h-[60px]" id="phone">{phone}</p>
+                        </>
+                    )}
+                    </div>
+
+                </div>
+            </div>
+            {isEditingAccountInfo && (
+                <div className="flex gap-6 mt-4">
+                    <Genbutton
+                    text="Save"
+                    textco="text-white"
+                    bg="bg-black"
+                    textsz="text-[18px]"
+                    w="w-[200px]"
+                    h="h-[60px]"
+                    // You'll implement this
+                    />
+                    <Genbutton
+                    text="Cancel"
+                    textco="text-black"
+                    bg="bg-white"
+                    textsz="text-[18px]"
+                    w="w-[200px]"
+                    h="h-[60px]"
+                    onClick={() => setIsEditingAccountInfo(false)}
+                    />
+                </div>
+            )}
+            <div className="w-[40%] flex justify-between">
+                <div className="flex gap-3">
+                    <img src="/addressicon.png" className="w-[24px] h-[24px]" alt="" />
+                    <h1 className="text-[18px] font-semibold font-Inter ">  Billing address : </h1>
+                </div>
+                <img src="/editicon.png" alt="edit" className="w-[24px] h-[24px] cursor-pointer active:scale-90 transition ease-in-out" />
+            </div>
+            <div className="w-full max-w-3xl flex flex-col gap-10 border border-gray-300 rounded-2xl justify-center items-center">
+                <div className="flex  h-[460px]  gap-5 w-[600px] ">
+                    {/* Left column: Labels */}
+                    <div className="flex flex-col justify-around w-fit h-full">
+                        <h1 className="font-inter font-semibold text-[20px]">Country :</h1>
+                        <h1 className="font-inter font-semibold text-[20px]">Address :</h1>
+                        <h1 className="font-inter font-semibold text-[20px]">City :</h1>
+                        <h1 className="font-inter font-semibold text-[20px]">State :</h1>
+                        <h1 className="font-inter font-semibold text-[20px]">Zip code :</h1>
+                    </div>
+
+                    {/* Right column: Values */}
+                    <div className="flex flex-col justify-around w-fit h-full">
+                        <p className="font-inter font-normal text-[18px]" id="country">{country}</p>
+                        <p className="font-inter font-normal text-[18px]" id="address">{address}</p>
+                        <p className="font-inter font-normal text-[18px]" id="city">{city}</p>
+                        <p className="font-inter font-normal text-[18px]" id="state">{state}</p>
+                        <p className="font-inter font-normal text-[18px]" id="zipcode">{zipCode}</p>
+                    </div>
+                </div>
+            </div>
+            <div className="flex gap-5">
+                <Genbutton text="Logout" textco="text-white" bg="bg-black"  textsz="text-[18px]" w="w-[260px]" h="h-[60px]" onClick={handleLogout}/>
+                <Genbutton text="Leave" textco="text-black" bg="bg-white"  textsz="text-[18px]" w="w-[260px]" h="h-[60px]"  onClick={() => navigate("/")}/>
+            </div>
+            
         </div>
+
     );
 }
