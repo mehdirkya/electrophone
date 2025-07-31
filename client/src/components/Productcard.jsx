@@ -2,7 +2,7 @@ import Genbutton from "./Genbutton";
 
 export default function Productcard(){
     return (
-        <div className="w-[268px] bg-[#EDEDED] h-[432px] flex-col flex justify-around items-center rounded-lg ">
+        <div className="w-[268px] bg-[#F6F6F6] h-[432px] flex-col flex justify-around items-center rounded-lg ">
             <br />
             <img src="/Iphone 14 pro.png" alt="" className="h-[160px] w-[130px] "/>
             <div className=" flex flex-col justify-around items-center gap-2">
