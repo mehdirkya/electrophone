@@ -4,7 +4,8 @@ import Button from "../components/Button";
 import Bannercomp from"../components/Bannercomp";
 import Productcard from "../components/Productcard";
 import { useEffect ,useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation,Link } from "react-router-dom";
+
 
 
 
@@ -170,12 +171,23 @@ export default function Home() {
       <div id="category" className="flex-col flex gap-10 justify-center items-center w-full h-[352px] ">   
         <h1 className="text-black text-[24px] font-medium font-Inter" >Category</h1>
         <div className="flex gap-8">
-          <CategoryCard image="catPhones.png" label="Phones"/>
-          <CategoryCard image="catWatch.png" label="Smartwatches"/>
-          <CategoryCard image="catconsole.png" label="Consoles"/>
-          <CategoryCard image="cattablet.png" label="Tablets"/>
-          <CategoryCard image="catHeadphones.png" label="Headphones"/>
+          <Link to="/products/Smartphones">
+            <CategoryCard image="catPhones.png" label="Smartphones" />
+          </Link>
+          <Link to="/products/Smartwatches">
+            <CategoryCard image="catWatch.png" label="Smartwatches" />
+          </Link>
+          <Link to="/products/Consoles">
+            <CategoryCard image="catconsole.png" label="Consoles" />
+          </Link>
+          <Link to="/products/Tablets">
+            <CategoryCard image="cattablet.png" label="Tablets" />
+          </Link>
+          <Link to="/products/Headphones">
+            <CategoryCard image="catHeadphones.png" label="Headphones" />
+          </Link>
         </div>
+
       </div>
       <div className="h-[1056px] w-full flex justify-center">
         <div className="flex-col flex gap-7">

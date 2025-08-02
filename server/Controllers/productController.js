@@ -1,5 +1,5 @@
 import Product from "../models/Product.js";
-import cloudinary from "../utils/cloudinary.js";
+
 
 // Create a new product with optional image and specs
 export const addProduct = async (req, res) => {
@@ -45,35 +45,65 @@ export const getAllProducts = async (req, res) => {
   }
 };
 
-// Delete a product (and image from Cloudinary)
-export const deleteProduct = async (req, res) => {
-  try {
-    const product = await Product.findById(req.params.id);
-    if (!product) return res.status(404).json({ message: "Product not found" });
 
-    // Delete Cloudinary image if it exists
-    if (product.imageId) {
-      await cloudinary.uploader.destroy(product.imageId);
-    }
-
-    await Product.findByIdAndDelete(req.params.id);
-    res.status(200).json({ message: "Product deleted" });
-  } catch (err) {
-    res.status(500).json({ message: "Delete failed", error: err.message });
-  }
-};
 export const getFilteredProducts = async (req, res) => {
   try {
-    const { category, brand } = req.query;
+    const { category, brand, page = 1, limit = 9 } = req.query;
 
     const filter = {};
     if (category) filter.category = category;
-    if (brand) filter.brand = brand;
 
-    const products = await Product.find(filter);
-    res.status(200).json(products);
+    if (brand) {
+      // brand can be comma separated list
+      const brandsArray = brand.split(",");
+      filter.brand = { $in: brandsArray };
+    }
+
+    // Convert page and limit to numbers and set skip for pagination
+    const pageNum = parseInt(page);
+    const limitNum = parseInt(limit);
+    const skip = (pageNum - 1) * limitNum;
+
+    const productsPromise = Product.find(filter).skip(skip).limit(limitNum);
+    const countPromise = Product.countDocuments(filter);
+
+    // Run queries in parallel
+    const [products, total] = await Promise.all([productsPromise, countPromise]);
+
+    res.status(200).json({ products, total });
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch products", error: err.message });
   }
 };
 
+// Assuming you have access to express router
+
+export const getBrandsByCategory = async (req, res) => {
+  try {
+    const { category } = req.query;
+    if (!category) {
+      return res.status(400).json({ message: "Category is required" });
+    }
+    const brands = await Product.distinct("brand", { category });
+    res.status(200).json(brands);  // This should be an array of strings
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch brands", error: err.message });
+  }
+};
+
+
+// Get one product by ID
+export const getProductById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const product = await Product.findById(id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    res.status(200).json(product);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch product", error: err.message });
+  }
+};

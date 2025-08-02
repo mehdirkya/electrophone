@@ -1,30 +1,34 @@
+import { Link } from "react-router-dom";
 import Genbutton from "./Genbutton";
 
 export default function Productcard({ product }) {
   if (!product) return null;
 
   return (
-    <div className="w-[268px] bg-[#F6F6F6] h-[432px] flex-col flex justify-around items-center rounded-lg">
-      <br />
-      <img
-        src={product.imageUrl || "/default-image.png"}
-        alt={product.name}
-        className="h-[170px] w-[150px]"
-      />
-      <div className="flex flex-col justify-around items-center gap-2">
-        <p className="text-[20px] font-medium font-Inter text-center">
-          {product.name}
-        </p>
-        <h2 className="text-[30px] font-semibold font-Inter">${product.price}</h2>
-        <Genbutton
-          w="w-[188px]"
-          h="h-[48px]"
-          bg="bg-black"
-          text="Buy Now"
-          textsz="text-[14px]"
-          textco="text-white"
+    <Link to={`/product/${product._id}`} className="no-underline text-inherit">
+      <div
+        className="
+          w-[220px] h-[300px] rounded-[10px] cursor-pointer
+          bg-gradient-to-br from-white to-gray-50
+          border border-gray-200
+          shadow-lg
+          hover:scale-[1.03] hover:shadow-2xl
+          transition-all duration-300 ease-in-out
+          flex flex-col items-center justify-center gap-3 p-4
+          relative
+        "
+      >
+        {/* Optional subtle inner shadow using a before pseudo-element */}
+        <div className="absolute inset-0 rounded-[10px] pointer-events-none shadow-inner"></div>
+
+        <img
+          src={product.imageUrl || "/default-image.png"}
+          alt={product.name}
+          className="h-[160px] w-[140px] object-contain z-10"
         />
+        <p className="text-[16px] font-medium font-Inter text-center z-10">{product.name}</p>
+        <h2 className="text-[20px] font-semibold font-Inter z-10">${product.price}</h2>
       </div>
-    </div>
+    </Link>
   );
 }

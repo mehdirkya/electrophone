@@ -4,8 +4,9 @@ import storage from "../utils/storage.js";
 import {
   addProduct,
   getAllProducts,
-  deleteProduct,
-  getFilteredProducts
+  getFilteredProducts,
+  getProductById,
+  getBrandsByCategory
 } from "../Controllers/productController.js";
 
 const upload = multer({ storage });
@@ -13,8 +14,10 @@ const router = express.Router();
 
 router.post("/add", upload.single("image"), addProduct);
 router.get("/", getAllProducts);
-router.delete("/:id", deleteProduct);
-router.get("/filter", getFilteredProducts);
+router.get("/filtered", getFilteredProducts);
+router.get("/brands", getBrandsByCategory);
+router.get("/:id", getProductById);
+
 
 
 export default router;
