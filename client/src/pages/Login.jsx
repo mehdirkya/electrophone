@@ -1,7 +1,7 @@
 import React, { useState , useContext} from "react";
 import Input from "../components/Input";
 import Genbutton from "../components/Genbutton";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useLocation } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
 export default function LoginPage() {
@@ -11,32 +11,32 @@ export default function LoginPage() {
   const handleEmailChange = (e) => setEmail(e.target.value);
   const handlePasswordChange = (e) => setPassword(e.target.value);
   const { login } = useContext(AuthContext);
-
+  const location = useLocation();
+  const from = location.state?.from || "/";
   const width = "w-[573px]"
 
  const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  try {
-    const res = await fetch("http://localhost:5000/api/users/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
+    try {
+      const res = await fetch("http://localhost:5000/api/users/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-    const data = await res.json(); // ✅ Parse once
+      const data = await res.json();
 
-    if (res.ok) {
-      login(data.token); // ✅ Use the already-parsed token
-      navigate("/");     // ✅ Redirect
-    } else {
-      console.error("Login failed:", data.message);
-      alert(data.message);
+      if (res.ok) {
+        login(data.token);
+        navigate(from, { replace: true });  // Redirect back to "from" path
+      } else {
+        alert(data.message);
+      }
+    } catch (err) {
+      console.error("Error logging in:", err);
     }
-  } catch (err) {
-    console.error("Error logging in:", err);
-  }
-};
+  };
 
   return (
     <div className="h-[670px] w-full bg-white flex flex-col justify-center items-center px-6 py-12">

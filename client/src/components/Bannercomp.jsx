@@ -1,5 +1,6 @@
 import React from "react";
 import Button from "./Button";
+import { Link } from "react-router-dom";
 
 export default function Bannercomp({
   label,
@@ -8,9 +9,10 @@ export default function Bannercomp({
   desccolor,
   bgcolor,
   bgcolordesc,
-  img
+  img,
+  category,     // ✅ Add this
+  brand         // ✅ Add this
 }) {
-  // Determine button styles based on bgcolordesc
   const buttonStyles = bgcolordesc === "white" 
     ? {
         bordercolor: "border-black",
@@ -25,6 +27,11 @@ export default function Bannercomp({
         hoverbg: "hover:bg-white"
       };
 
+  // ✅ Construct URL with query param for brand
+  const targetLink = category && brand 
+    ? `/products/${category}?brand=${brand}` 
+    : "#";
+
   return (
     <div className={`h-full ${bgcolor} w-[360px]`}>
       <img 
@@ -33,20 +40,18 @@ export default function Bannercomp({
         className="w-[360px] h-[366px] object-cover"
       />
       <div className={`font-inter flex-col flex justify-start items-center gap-5 p-4`}>
-        <h3 className={`text-[33px] font-normal ${labelcolor}`}>
-          {label}
-        </h3>
-        <p className={`text-[14px] h-[72px] w-[296px] font-medium ${desccolor}`}>
-          {desc}
-        </p>
-        <Button 
-          bordercolor={buttonStyles.bordercolor}
-          textcolor={buttonStyles.textcolor}
-          hovertext={buttonStyles.hovertext}
-          hoverbg={buttonStyles.hoverbg}
-          h="56px" 
-          w="191px" 
-        />
+        <h3 className={`text-[33px] font-normal ${labelcolor}`}>{label}</h3>
+        <p className={`text-[14px] h-[72px] w-[296px] font-medium ${desccolor}`}>{desc}</p>
+        <Link to={targetLink}>
+          <Button 
+            bordercolor={buttonStyles.bordercolor}
+            textcolor={buttonStyles.textcolor}
+            hovertext={buttonStyles.hovertext}
+            hoverbg={buttonStyles.hoverbg}
+            h="56px" 
+            w="191px" 
+          />
+        </Link>
       </div>
     </div>
   );

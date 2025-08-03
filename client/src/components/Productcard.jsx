@@ -5,7 +5,7 @@ export default function Productcard({ product }) {
   if (!product) return null;
 
   return (
-    <Link to={`/product/${product._id}`} className="no-underline text-inherit">
+    <Link to={`/product/${product._id}`} className="no-underline text-inherit h-fit w-fit">
       <div
         className="
           w-[220px] h-[300px] rounded-[10px] cursor-pointer

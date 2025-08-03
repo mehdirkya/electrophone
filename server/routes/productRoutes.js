@@ -6,7 +6,8 @@ import {
   getAllProducts,
   getFilteredProducts,
   getProductById,
-  getBrandsByCategory
+  getBrandsByCategory,
+  getRelatedProducts
 } from "../Controllers/productController.js";
 
 const upload = multer({ storage });
@@ -17,7 +18,6 @@ router.get("/", getAllProducts);
 router.get("/filtered", getFilteredProducts);
 router.get("/brands", getBrandsByCategory);
 router.get("/:id", getProductById);
-
-
+router.get("/:id/related", getRelatedProducts);
 
 export default router;

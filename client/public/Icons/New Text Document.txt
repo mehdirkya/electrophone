@@ -1,0 +1,20 @@
+batteryicon
+connectionicon
+coresicon
+cpuicon
+featuresicon
+frontcameraicon
+gpuicon
+healthicon
+maincameraicon
+miltaryicon (durability)
+osicon
+performance
+ramicon
+screensize
+sensoricon
+soundicon
+storage
+stylusicon
+watericon
+weighticon

@@ -107,3 +107,55 @@ export const getProductById = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch product", error: err.message });
   }
 };
+export const getRelatedProducts = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const currentProduct = await Product.findById(id);
+
+    if (!currentProduct) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    const { brand, category } = currentProduct;
+
+    // Exclude current product
+    const excludeSelf = { _id: { $ne: id } };
+
+    // 1. Same brand + category
+    const sameBrandCategory = await Product.find({
+      ...excludeSelf,
+      brand,
+      category,
+    }).limit(4);
+
+    if (sameBrandCategory.length >= 4) {
+      return res.json(sameBrandCategory.slice(0, 4));
+    }
+
+    // 2. Same brand (other categories)
+    const sameBrand = await Product.find({
+      ...excludeSelf,
+      brand,
+      category: { $ne: category },
+    });
+
+    // 3. Same category (other brands)
+    const sameCategory = await Product.find({
+      ...excludeSelf,
+      category,
+      brand: { $ne: brand },
+    });
+
+    // Combine and fill up to 4
+    const combined = [
+      ...sameBrandCategory,
+      ...sameBrand,
+      ...sameCategory.sort(() => 0.5 - Math.random()),
+    ];
+
+    res.json(combined.slice(0, 4));
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch related products", error: err.message });
+  }
+};
+

@@ -1,9 +1,10 @@
-import { useNavigate } from "react-router-dom";
 import Genbutton from "../components/Genbutton";
 import Input from "../components/Input";
 import React, { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
+import { useNavigate, useLocation } from "react-router-dom";
+
 
 export default function Profile() {
   const [isEditingAccountInfo, setIsEditingAccountInfo] = useState(false);
@@ -25,6 +26,20 @@ export default function Profile() {
 
   const navigate = useNavigate();
   const { logout } = useContext(AuthContext);
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.editAddress) {
+      setIsEditingAddressInfo(true);
+      // initialize edited fields from existing ones to avoid empty inputs
+      setEditedCountry(country);
+      setEditedAddress(address);
+      setEditedCity(city);
+      setEditedState(state);
+      setEditedZipCode(zipCode);
+    }
+  }, [location.state, country, address, city, state, zipCode]);
+
 
   useEffect(() => {
     const fetchProfile = async () => {
