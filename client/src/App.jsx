@@ -13,6 +13,7 @@ import Payment from "./pages/Payment";
 import Profile from "./pages/Profile";
 import Products from "./pages/Products";
 import Accountinfoedit from "./components/Accountinfoedit";
+import ThankYou from "./pages/ThankYou";
 export default function App() {
   return (
     <div className="min-h-screen flex flex-col overflow-x-hidden">
@@ -32,6 +33,7 @@ export default function App() {
           <Route path="/Payment" element={<Payment />} />
           <Route path="/Profile" element={<Profile />} />
           <Route path="/Accountinfoedit" element={<Accountinfoedit />} />
+          <Route path="/ThankYou" element={<ThankYou />} />
         </Routes>
       </main>
 
