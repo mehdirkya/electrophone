@@ -88,7 +88,7 @@ export default function Products() {
   }
 
   return (
-    <section className="bg-white text-gray-900 min-h-screen h-[133vh]">
+    <section className="bg-white text-gray-900  h-[1400px]">
 
          {/* Breadcrumbs */}
         <div className="w-full h-[60px]  flex items-center justify-around gap-3">
