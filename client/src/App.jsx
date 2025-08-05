@@ -14,12 +14,12 @@ import Profile from "./pages/Profile";
 import Products from "./pages/Products";
 import Accountinfoedit from "./components/Accountinfoedit";
 import ThankYou from "./pages/ThankYou";
+
 export default function App() {
   return (
     <div className="min-h-screen flex flex-col overflow-x-hidden">
       <Navbar />
       
-      {/* Main content area that grows to fill available space */}
       <main className="flex-grow">
         <Routes>
           <Route path="/" element={<Home />} />
@@ -41,3 +41,4 @@ export default function App() {
     </div>
   );
 }
+

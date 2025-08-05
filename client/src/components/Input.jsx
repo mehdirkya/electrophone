@@ -1,28 +1,34 @@
 import { useRef } from "react";
 
-export default function Input({ name, type = "text", value, onChange, placeholder , w }) {
+export default function Input({ ...props }) {
   const inputRef = useRef(null);
 
-  const handleClick = () => {
-    inputRef.current?.focus();
+  const handleContainerClick = (e) => {
+    // Only focus if click wasn't directly on the input
+    if (e.target !== inputRef.current) {
+      inputRef.current?.focus();
+    }
   };
 
   return (
     <div
-      onClick={handleClick}
-      className={`${w} border h-[60px] border-gray-300 rounded-md flex-col flex justify-center  gap-1 items-center-safe cursor-text`}
+      onClick={handleContainerClick}
+      className={`${props.w} border border-gray-300 rounded-md flex flex-col justify-center cursor-text ${props.className} p-2 sm:p-3`}
+      style={{ minHeight: 60 }}
     >
-      <label htmlFor={name} className="text-sm font-semibold text-black w-[95%]">
-        {name}
+      <label htmlFor={props.name} className="text-sm font-semibold text-black mb-1 select-none">
+        {props.name}
       </label>
       <input
         ref={inputRef}
-        id={name}
-        type={type}
-        placeholder={placeholder || name}
-        value={value}
-        onChange={onChange}
-        className="w-[95%] rounded-md placeholder-gray-400 text-sm focus:outline-none focus:ring-0"
+        id={props.name}
+        type={props.type}
+        placeholder={props.placeholder || props.name}
+        value={props.value}
+        onChange={props.onChange}
+        disabled={props.disabled}
+        className="w-full rounded-md placeholder-gray-400 text-sm focus:outline-none focus:ring-0"
+        autoComplete="off"
       />
     </div>
   );

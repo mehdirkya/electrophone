@@ -1,59 +1,75 @@
-import React , { useContext } from "react";
-import { ShoppingCart, User } from "lucide-react";
+import  { useContext, useEffect, useState } from "react";
+import { ShoppingCart, User, Menu, X } from "lucide-react";
 import { AuthContext } from "../context/AuthContext";
 import { Link } from "react-router-dom";
 
 export default function Navbar() {
-  // Check if user is logged in by checking token in localStorage
   const { token } = useContext(AuthContext);
-  const userLink = token ? "/profile" : "/login";  
+  const userLink = token ? "/profile" : "/login";
+  const [isOpen, setIsOpen] = useState(false);
+
+  // 👇 Added state to trigger re-render on resize
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
-    <header className="sticky top-0 z-50 w-full h-[111px] shadow-sm bg-white flex items-center justify-around gap-60 ">
-            <div className="flex justify-start">
-              <Link to="/" className="cursor-pointer w-fit">
-                <img
-                  src="/logo.png"
-                  alt="Electrophone Logo"
-                  className="w-[344px] h-[95px] object-contain"
-                />
-              </Link> 
-            </div>
-          
+    <header className="sticky top-0 z-50 w-full backdrop-blur-md bg-white/60 shadow-inner-glass border-b border-white/30">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 py-3 md:py-4 flex items-center justify-between">
 
-        {/* Navigation Links */}
-        <nav className="flex items-center gap-8 text-sm font-medium font-['Inter'] w-[344px] ">
-          <Link
-            to="/"
-            className="text-[18px] w-fit text-black opacity-100 hover:opacity-70 transition-all duration-200 no-underline cursor-pointer hover:scale-[1.03]"
-          >
+        {/* Logo */}
+        <Link to="/" className="flex-shrink-0">
+          <img
+            src="/logo.png"
+            alt="Electrophone Logo"
+            className="w-[160px] md:w-[240px] object-contain transition-all duration-300"
+          />
+        </Link>
+
+        {/* Navigation - Desktop */}
+        <nav className="hidden md:flex items-center gap-12 text-[16px] font-medium font-['Inter']">
+          <Link to="/" className="hover:text-blue-600 transition-colors">Home</Link>
+          <Link to="/" state={{ scrollTo: "category" }} className="hover:text-blue-600 transition-colors">Category</Link>
+          <Link to="/contact" className="hover:text-blue-600 transition-colors">Contact Us</Link>
+        </nav>
+
+        {/* Icons + Menu */}
+        <div className="flex items-center gap-5 md:gap-6">
+          <Link to={userLink}>
+            <User className="w-6 h-6 md:w-7 md:h-7 text-black hover:text-blue-600 transition-colors" />
+          </Link>
+          <Link to="/shoppingcart">
+            <ShoppingCart className="w-6 h-6 md:w-7 md:h-7 text-black hover:text-blue-600 transition-colors" />
+          </Link>
+          {/* Mobile Hamburger */}
+          <button onClick={() => setIsOpen(!isOpen)} className="md:hidden">
+            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Nav - Dropdown */}
+      <div
+        className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
+          isOpen ? "max-h-40 opacity-100 py-4" : "max-h-0 opacity-0 py-0"
+        } px-6 bg-white/80 backdrop-blur-md`}
+      >
+        <nav className="flex flex-col gap-4 text-[15px] font-medium">
+          <Link to="/" className="hover:text-blue-600 transition-colors" onClick={() => setIsOpen(false)}>
             Home
           </Link>
-          <Link
-            to="/"
-            state={{ scrollTo: "category" }}
-            className="text-[18px] w-fit text-black opacity-100 hover:opacity-70 transition-all duration-200 no-underline cursor-pointer hover:scale-[1.03]"
-          >
+          <Link to="/" state={{ scrollTo: "category" }} className="hover:text-blue-600 transition-colors" onClick={() => setIsOpen(false)}>
             Category
           </Link>
-          <Link
-            to="/contact"
-            className="text-[18px] w-fit forced-colors:black opacity-50 hover:opacity-70 transition-all duration-200 no-underline cursor-pointer hover:scale-[1.03]"
-          >
+          <Link to="/contact" className="hover:text-blue-600 transition-colors" onClick={() => setIsOpen(false)}>
             Contact Us
           </Link>
         </nav>
-
-        <div className="flex items-center gap-6 w-[344px] justify-end">
-          <Link to={userLink} className="w-fit">
-            <User className="w-8 h-8  text-black cursor-pointer hover:scale-[1.1] transition-transform duration-200" />
-          </Link>
-          <Link to="/shoppingcart" className="w-fit">
-            <ShoppingCart className="w-8 h-8 text-black cursor-pointer hover:scale-[1.1] transition-transform duration-200" />
-          </Link>
-        </div>
-
-        
+      </div>
     </header>
   );
 }

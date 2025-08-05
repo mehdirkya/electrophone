@@ -10,8 +10,8 @@ export default function Bannercomp({
   bgcolor,
   bgcolordesc,
   img,
-  category,     // ✅ Add this
-  brand         // ✅ Add this
+  category,
+  brand
 }) {
   const buttonStyles = bgcolordesc === "white" 
     ? {
@@ -27,21 +27,20 @@ export default function Bannercomp({
         hoverbg: "hover:bg-white"
       };
 
-  // ✅ Construct URL with query param for brand
   const targetLink = category && brand 
     ? `/products/${category}?brand=${brand}` 
     : "#";
 
   return (
-    <div className={`h-full ${bgcolor} w-[360px]`}>
+    <div className={`flex-1 min-w-[260px] max-w-full ${bgcolor}`}>
       <img 
         src={img} 
         alt={label} 
-        className="w-[360px] h-[366px] object-cover"
+        className="w-full h-auto object-contain"
       />
       <div className={`font-inter flex-col flex justify-start items-center gap-5 p-4`}>
         <h3 className={`text-[33px] font-normal ${labelcolor}`}>{label}</h3>
-        <p className={`text-[14px] h-[72px] w-[296px] font-medium ${desccolor}`}>{desc}</p>
+        <p className={`text-[14px] h-[72px] w-[90%] font-medium ${desccolor}`}>{desc}</p>
         <Link to={targetLink}>
           <Button 
             bordercolor={buttonStyles.bordercolor}

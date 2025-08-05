@@ -6,7 +6,7 @@ import './index.css';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext'; // ✅ Import CartProvider
 import { Toaster } from "react-hot-toast";
-
+import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

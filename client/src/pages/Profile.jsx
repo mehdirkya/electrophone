@@ -5,12 +5,13 @@ import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 
-
 export default function Profile() {
   const [isEditingAccountInfo, setIsEditingAccountInfo] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
+  const [editedPhone, setEditedPhone] = useState(""); // New editedPhone state
+
   const [country, setCountry] = useState("");
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
@@ -31,7 +32,6 @@ export default function Profile() {
   useEffect(() => {
     if (location.state?.editAddress) {
       setIsEditingAddressInfo(true);
-      // initialize edited fields from existing ones to avoid empty inputs
       setEditedCountry(country);
       setEditedAddress(address);
       setEditedCity(city);
@@ -39,7 +39,6 @@ export default function Profile() {
       setEditedZipCode(zipCode);
     }
   }, [location.state, country, address, city, state, zipCode]);
-
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -54,6 +53,8 @@ export default function Profile() {
 
         setEmail(data.email || "");
         setPhone(data.phone || "");
+        setEditedPhone(data.phone || ""); // Sync editedPhone with fetched phone
+
         setCountry(data.country || "");
         setAddress(data.address || "");
         setCity(data.city || "");
@@ -74,7 +75,7 @@ export default function Profile() {
   }, []);
 
   const handlePasswordChange = (e) => setPassword(e.target.value);
-  const handlePhoneChange = (e) => setPhone(e.target.value);
+  const handlePhoneChange = (e) => setEditedPhone(e.target.value); // Use editedPhone
 
   const handleLogout = () => {
     logout();
@@ -84,7 +85,7 @@ export default function Profile() {
   const handleSaveAccountInfo = async () => {
     try {
       const token = localStorage.getItem("token");
-      const payload = { phone };
+      const payload = { phone: editedPhone }; // Send editedPhone
       if (password) payload.password = password;
 
       const res = await axios.put("http://localhost:5000/api/users/profile", payload, {
@@ -92,12 +93,19 @@ export default function Profile() {
       });
 
       if (res.status === 200) {
+        setPhone(editedPhone); // Update actual phone with saved value
         setIsEditingAccountInfo(false);
         setPassword("");
       }
     } catch (error) {
       console.error("Failed to update account info:", error);
     }
+  };
+
+  const handleCancelAccountEdit = () => {
+    setEditedPhone(phone); // Reset editedPhone to original phone
+    setIsEditingAccountInfo(false);
+    setPassword("");
   };
 
   const handleSaveAddress = async () => {
@@ -128,28 +136,27 @@ export default function Profile() {
     }
   };
 
-  // Tailwind class for smooth fade and scale transition container
   const transitionClass = "transition-all duration-300 ease-in-out";
 
   return (
-    <div className="h-[1300px] w-full bg-white flex flex-col justify-center items-center gap-10">
+    <div className="min-h-screen w-full bg-white flex flex-col justify-center items-center gap-10 px-4 py-10">
       {/* Account Info Header */}
-      <div className="w-[40%] flex justify-between">
+      <div className="w-full max-w-3xl flex justify-between items-center px-2">
         <div className="flex gap-3 items-center">
           <img
             src="/personal-information.png"
-            className="w-[24px] h-[24px]"
+            className="w-6 h-6"
             alt=""
             style={{ transition: "transform 0.3s ease" }}
             onMouseEnter={e => e.currentTarget.style.transform = "scale(1.1)"}
             onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
           />
-          <h1 className="text-[18px] font-semibold font-Inter select-none">Account Information :</h1>
+          <h1 className="text-[18px] font-semibold font-Inter select-none">Account Information:</h1>
         </div>
         <img
           src="/editicon.png"
           alt="edit"
-          className="w-[28px] h-[28px] cursor-pointer active:scale-90 transition-transform ease-in-out"
+          className="w-7 h-7 cursor-pointer active:scale-90 transition-transform ease-in-out"
           onClick={() => setIsEditingAccountInfo(true)}
           onMouseEnter={e => e.currentTarget.classList.add("scale-110")}
           onMouseLeave={e => e.currentTarget.classList.remove("scale-110")}
@@ -158,69 +165,67 @@ export default function Profile() {
 
       {/* Account Info Block */}
       <div
-        className={`${transitionClass} w-full max-w-3xl flex flex-col gap-10 border border-gray-300 rounded-2xl justify-center items-center`}
+        className={`${transitionClass} w-full max-w-3xl flex flex-col gap-10 border border-gray-300 rounded-2xl justify-center items-center p-4`}
         style={{
           opacity: isEditingAccountInfo ? 1 : 0.95,
           transform: isEditingAccountInfo ? "scale(1.02)" : "scale(1)",
         }}
       >
-        <div className="flex h-[350px] gap-5 w-[600px]">
-          <div className="flex flex-col justify-around w-fit h-full">
-            {/* Email (disabled editing) */}
-            <div className="flex gap-6 items-center">
-              <h1 className="font-inter font-semibold text-[20px] w-[100px] select-none">Email :</h1>
-              {isEditingAccountInfo ? (
-                <Input
-                  value={email}
-                  disabled
-                  name="Email"
-                  w="w-[500px]"
-                  className="focus:ring-2 focus:ring-blue-400 transition"
-                />
-              ) : (
-                <p className="select-text">{email}</p>
-              )}
-            </div>
+        <div className="flex flex-col gap-6 w-full">
+          {/* Email */}
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-6 items-start sm:items-center">
+            <h1 className="font-inter font-semibold text-[18px] select-none sm:w-[120px] sm:text-right sm:pr-2">Email:</h1>
+            {isEditingAccountInfo ? (
+              <Input
+                value={email}
+                disabled
+                name="Email"
+                w="w-full"
+                className="focus:ring-2 focus:ring-blue-400 transition"
+              />
+            ) : (
+              <p className="select-text break-all">{email}</p>
+            )}
+          </div>
 
-            {/* Password (editable when editing) */}
-            <div className="flex gap-6 items-center">
-              <h1 className="font-inter font-semibold text-[20px] w-[100px] select-none">Password :</h1>
-              {isEditingAccountInfo ? (
-                <Input
-                  type="password"
-                  value={password}
-                  onChange={handlePasswordChange}
-                  name="New Password"
-                  w="w-[500px]"
-                  className="focus:ring-2 focus:ring-blue-400 transition"
-                />
-              ) : (
-                <p className="select-text">*********</p>
-              )}
-            </div>
+          {/* Password */}
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-6 items-start sm:items-center">
+            <h1 className="font-inter font-semibold text-[18px] select-none sm:w-[120px] sm:text-right sm:pr-2">Password:</h1>
+            {isEditingAccountInfo ? (
+              <Input
+                type="password"
+                value={password}
+                onChange={handlePasswordChange}
+                name="New Password"
+                w="w-full"
+                className="focus:ring-2 focus:ring-blue-400 transition"
+              />
+            ) : (
+              <p className="select-text">*********</p>
+            )}
+          </div>
 
-            {/* Phone (editable when editing) */}
-            <div className="flex gap-6 items-center">
-              <h1 className="font-inter font-semibold text-[20px] w-[100px] select-none">Phone :</h1>
-              {isEditingAccountInfo ? (
-                <Input
-                  value={phone}
-                  onChange={handlePhoneChange}
-                  name="Phone"
-                  w="w-[500px]"
-                  className="focus:ring-2 focus:ring-blue-400 transition"
-                />
-              ) : (
-                <p className="select-text">{phone}</p>
-              )}
-            </div>
+          {/* Phone */}
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-6 items-start sm:items-center">
+            <h1 className="font-inter font-semibold text-[18px] select-none sm:w-[120px] sm:text-right sm:pr-2">Phone:</h1>
+            {isEditingAccountInfo ? (
+              <Input
+                value={editedPhone}  // Use editedPhone here
+                onChange={handlePhoneChange}
+                name="Phone"
+                w="w-full"
+                className="focus:ring-2 focus:ring-blue-400 transition"
+              />
+            ) : (
+              <p className="select-text">{phone}</p>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Account info save/cancel buttons */}
+      {/* Account Save/Cancel */}
       <div
-        className={`${transitionClass} flex gap-6 mt-4`}
+        className={`${transitionClass} flex flex-wrap justify-center gap-6 mt-4`}
         style={{
           opacity: isEditingAccountInfo ? 1 : 0,
           height: isEditingAccountInfo ? "auto" : 0,
@@ -246,7 +251,7 @@ export default function Profile() {
               textsz="text-[18px]"
               w="w-[200px]"
               h="h-[60px]"
-              onClick={() => setIsEditingAccountInfo(false)}
+              onClick={handleCancelAccountEdit}
               className="hover:bg-gray-100 transition-colors"
             />
           </>
@@ -254,11 +259,11 @@ export default function Profile() {
       </div>
 
       {/* Address Header */}
-      <div className="w-[40%] flex justify-between">
+      <div className="w-full max-w-3xl flex justify-between items-center px-2">
         <div className="flex gap-3 items-center">
           <img
             src="/addressicon.png"
-            className="w-[24px] h-[24px]"
+            className="w-6 h-6"
             alt=""
             style={{ transition: "transform 0.3s ease" }}
             onMouseEnter={e => e.currentTarget.style.transform = "scale(1.1)"}
@@ -269,7 +274,7 @@ export default function Profile() {
         <img
           src="/editicon.png"
           alt="edit"
-          className="w-[24px] h-[24px] cursor-pointer active:scale-90 transition-transform ease-in-out"
+          className="w-6 h-6 cursor-pointer active:scale-90 transition-transform ease-in-out"
           onClick={() => {
             setIsEditingAddressInfo(true);
             setEditedCountry(country);
@@ -285,114 +290,44 @@ export default function Profile() {
 
       {/* Address Info Block */}
       <div
-        className={`${transitionClass} w-full max-w-3xl flex flex-col gap-10 border border-gray-300 rounded-2xl justify-center items-center`}
+        className={`${transitionClass} w-full max-w-3xl flex flex-col gap-10 border border-gray-300 rounded-2xl justify-center items-center p-4`}
         style={{
           opacity: isEditingAddressInfo ? 1 : 0.95,
           transform: isEditingAddressInfo ? "scale(1.02)" : "scale(1)",
         }}
       >
-        <div className="flex h-[490px] gap-5 w-[600px]">
-          <div className="flex flex-col justify-around w-fit h-full">
-            {/* Country */}
-            <div className="flex gap-6 items-center">
-              <h1 className="font-inter font-semibold text-[20px] w-[100px] select-none">Country :</h1>
+        <div className="flex flex-col gap-6 w-full">
+          {[
+            ["Country", editedCountry, setEditedCountry, country],
+            ["Address", editedAddress, setEditedAddress, address],
+            ["City", editedCity, setEditedCity, city],
+            ["State", editedState, setEditedState, state],
+            ["Zip code", editedZipCode, setEditedZipCode, zipCode],
+          ].map(([label, value, setter, fallback], i) => (
+            <div
+              key={i}
+              className="flex flex-col sm:flex-row gap-2 sm:gap-6 items-start sm:items-center"
+            >
+              <h1 className="font-inter font-semibold text-[18px] w-[100px] select-none">{label}:</h1>
               {isEditingAddressInfo ? (
                 <Input
-                  name={"Country"}
-                  w="w-[520px]"
+                  name={label}
                   type="text"
-                  value={editedCountry}
-                  onChange={(e) => setEditedCountry(e.target.value)}
-                  className="font-inter font-normal text-[18px] border border-gray-300 px-2 py-1 rounded w-[300px] focus:ring-2 focus:ring-blue-400 transition"
+                  value={value}
+                  onChange={(e) => setter(e.target.value)}
+                  w="w-full"
+                  className="font-inter font-normal text-[18px] border border-gray-300 px-2 py-1 rounded focus:ring-2 focus:ring-blue-400 transition"
                 />
               ) : (
-                <p className="font-inter font-normal text-[18px] select-text" id="country">
-                  {country}
-                </p>
+                <p className="font-inter font-normal text-[18px] select-text">{fallback}</p>
               )}
             </div>
-
-            {/* Address */}
-            <div className="flex gap-6 items-center">
-              <h1 className="font-inter font-semibold text-[20px] w-[100px] select-none">Address :</h1>
-              {isEditingAddressInfo ? (
-                <Input
-                  name={"Address"}
-                  w="w-[520px]"
-                  type="text"
-                  value={editedAddress}
-                  onChange={(e) => setEditedAddress(e.target.value)}
-                  className="font-inter font-normal text-[18px] border border-gray-300 px-2 py-1 rounded w-[300px] focus:ring-2 focus:ring-blue-400 transition"
-                />
-              ) : (
-                <p className="font-inter font-normal text-[18px] select-text" id="address">
-                  {address}
-                </p>
-              )}
-            </div>
-
-            {/* City */}
-            <div className="flex gap-6 items-center">
-              <h1 className="font-inter font-semibold text-[20px] w-[100px] select-none">City :</h1>
-              {isEditingAddressInfo ? (
-                <Input
-                  name={"City"}
-                  w="w-[520px]"
-                  type="text"
-                  value={editedCity}
-                  onChange={(e) => setEditedCity(e.target.value)}
-                  className="font-inter font-normal text-[18px] border border-gray-300 px-2 py-1 rounded w-[300px] focus:ring-2 focus:ring-blue-400 transition"
-                />
-              ) : (
-                <p className="font-inter font-normal text-[18px] select-text" id="city">
-                  {city}
-                </p>
-              )}
-            </div>
-
-            {/* State */}
-            <div className="flex gap-6 items-center">
-              <h1 className="font-inter font-semibold text-[20px] w-[100px] select-none">State :</h1>
-              {isEditingAddressInfo ? (
-                <Input
-                  name={"State"}
-                  w="w-[520px]"
-                  type="text"
-                  value={editedState}
-                  onChange={(e) => setEditedState(e.target.value)}
-                  className="font-inter font-normal text-[18px] border border-gray-300 px-2 py-1 rounded w-[300px] focus:ring-2 focus:ring-blue-400 transition"
-                />
-              ) : (
-                <p className="font-inter font-normal text-[18px] select-text" id="state">
-                  {state}
-                </p>
-              )}
-            </div>
-
-            {/* Zip code */}
-            <div className="flex gap-6 items-center">
-              <h1 className="font-inter font-semibold text-[20px] w-[100px] select-none">Zip code :</h1>
-              {isEditingAddressInfo ? (
-                <Input
-                  name={"Zip code"}
-                  w="w-[520px]"
-                  type="text"
-                  value={editedZipCode}
-                  onChange={(e) => setEditedZipCode(e.target.value)}
-                  className="font-inter font-normal text-[18px] border border-gray-300 px-2 py-1 rounded w-[300px] focus:ring-2 focus:ring-blue-400 transition"
-                />
-              ) : (
-                <p className="font-inter font-normal text-[18px] select-text" id="zipcode">
-                  {zipCode}
-                </p>
-              )}
-            </div>
-          </div>
+          ))}
         </div>
       </div>
 
-      {/* Address save/cancel buttons or Logout/Leave buttons */}
-      <div className="flex gap-5">
+      {/* Address Save/Cancel or Logout/Leave */}
+      <div className="flex flex-wrap justify-center gap-5 mt-6 px-2">
         {isEditingAddressInfo ? (
           <>
             <Genbutton

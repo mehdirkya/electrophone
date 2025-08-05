@@ -10,8 +10,6 @@ export default function ContactUsPage() {
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
 
-  const width = "w-[786px]";
-
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -42,16 +40,16 @@ export default function ContactUsPage() {
   };
 
   return (
-    <div className="min-h-[750px] w-full bg-white flex flex-col justify-center items-center gap-8">
+    <div className="min-h-screen w-full bg-white flex flex-col justify-center items-center px-4 py-8 sm:py-12 lg:py-16">
       <Toaster position="top-center" reverseOrder={false} />
 
-      <h1 className="text-[30px] font-semibold font-Inter text-center mb-10">
+      <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold font-Inter text-center mb-6 sm:mb-10">
         Contact Us
       </h1>
 
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col gap-10 w-full max-w-3xl"
+        className="w-full max-w-md sm:max-w-lg lg:max-w-2xl xl:max-w-3xl flex flex-col gap-6 sm:gap-8"
       >
         <Input
           name="Full Name"
@@ -59,7 +57,7 @@ export default function ContactUsPage() {
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
           placeholder="Enter your full name"
-          w={width}
+          w="w-full"
         />
 
         <Input
@@ -68,7 +66,7 @@ export default function ContactUsPage() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Enter your email"
-          w={width}
+          w="w-full"
         />
 
         <Input
@@ -77,19 +75,21 @@ export default function ContactUsPage() {
           value={subject}
           onChange={(e) => setSubject(e.target.value)}
           placeholder="Enter subject"
-          w={width}
+          w="w-full"
         />
 
-        <Textarea value={message} onChange={(e) => setMessage(e.target.value)} />
+        <div className="w-full">
+          <Textarea value={message} onChange={(e) => setMessage(e.target.value)} />
+        </div>
 
-        <div className="w-full flex justify-center mt-4">
+        <div className="w-full flex justify-center mt-2 sm:mt-4">
           <Genbutton
             type="submit"
-            w="w-[290px]"
-            h="h-[64px]"
+            w="w-full sm:w-[290px]"
+            h="h-14 sm:h-16"
             bg="bg-black"
             text="Send Message"
-            textsz="text-sm"
+            textsz="text-sm sm:text-base"
             textco="text-white"
             hover="hover:bg-gray-900"
           />
