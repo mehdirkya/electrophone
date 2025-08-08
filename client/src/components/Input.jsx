@@ -27,7 +27,7 @@ export default function Input({ ...props }) {
         value={props.value}
         onChange={props.onChange}
         disabled={props.disabled}
-        className="w-full rounded-md placeholder-gray-400 text-sm focus:outline-none focus:ring-0"
+        className="w-full rounded-md placeholder-gray-400 text-lg focus:outline-none focus:ring-0"
         autoComplete="off"
       />
     </div>

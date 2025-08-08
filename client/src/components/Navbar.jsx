@@ -1,21 +1,47 @@
-import  { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ShoppingCart, User, Menu, X } from "lucide-react";
 import { AuthContext } from "../context/AuthContext";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 export default function Navbar() {
   const { token } = useContext(AuthContext);
   const userLink = token ? "/profile" : "/login";
   const [isOpen, setIsOpen] = useState(false);
 
-  // 👇 Added state to trigger re-render on resize
+  // State for window width (optional for responsiveness)
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
+  // State to track if user is admin
+  const [isAdmin, setIsAdmin] = useState(false);
+
   useEffect(() => {
+    // Update window width on resize
     const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  useEffect(() => {
+    // Fetch user profile to check admin status if token exists
+    const fetchUserProfile = async () => {
+      if (!token) {
+        setIsAdmin(false);
+        return;
+      }
+      try {
+        const res = await axios.get("http://localhost:5000/api/users/profile", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setIsAdmin(res.data.isAdmin || false);
+      } catch (err) {
+        console.error("Failed to fetch user profile in Navbar:", err);
+        setIsAdmin(false);
+      }
+    };
+
+    fetchUserProfile();
+  }, [token]);
 
   return (
     <header className="sticky top-0 z-50 w-full backdrop-blur-md bg-white/60 shadow-inner-glass border-b border-white/30">
@@ -34,7 +60,16 @@ export default function Navbar() {
         <nav className="hidden md:flex items-center gap-12 text-[16px] font-medium font-['Inter']">
           <Link to="/" className="hover:text-blue-600 transition-colors">Home</Link>
           <Link to="/" state={{ scrollTo: "category" }} className="hover:text-blue-600 transition-colors">Category</Link>
-          <Link to="/contact" className="hover:text-blue-600 transition-colors">Contact Us</Link>
+
+          {isAdmin ? (
+            <Link to="/admin" className="hover:text-blue-600 transition-colors">
+              Admin Dashboard
+            </Link>
+          ) : (
+            <Link to="/contact" className="hover:text-blue-600 transition-colors">
+              Contact Us
+            </Link>
+          )}
         </nav>
 
         {/* Icons + Menu */}
@@ -65,9 +100,15 @@ export default function Navbar() {
           <Link to="/" state={{ scrollTo: "category" }} className="hover:text-blue-600 transition-colors" onClick={() => setIsOpen(false)}>
             Category
           </Link>
-          <Link to="/contact" className="hover:text-blue-600 transition-colors" onClick={() => setIsOpen(false)}>
-            Contact Us
-          </Link>
+          {isAdmin ? (
+            <Link to="/admin" className="hover:text-blue-600 transition-colors" onClick={() => setIsOpen(false)}>
+              Admin Dashboard
+            </Link>
+          ) : (
+            <Link to="/contact" className="hover:text-blue-600 transition-colors" onClick={() => setIsOpen(false)}>
+              Contact Us
+            </Link>
+          )}
         </nav>
       </div>
     </header>

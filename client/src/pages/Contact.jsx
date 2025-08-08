@@ -3,6 +3,7 @@ import Input from "../components/Input";
 import Genbutton from "../components/Genbutton";
 import Textarea from "../components/Textarea";
 import toast, { Toaster } from "react-hot-toast";
+import axios from "axios";
 
 export default function ContactUsPage() {
   const [fullName, setFullName] = useState("");
@@ -10,33 +11,32 @@ export default function ContactUsPage() {
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validation
     if (!fullName || !email || !subject || !message) {
-      toast.error("Please fill out all fields.", {
-        duration: 2000,
-      });
+      toast.error("Please fill out all fields.", { duration: 2000 });
       return;
     }
 
-    console.log("Message Sent:", {
-      fullName,
-      email,
-      subject,
-      message,
-    });
+    try {
+      await axios.post("http://localhost:5000/api/contact", {
+        fullName,
+        email,
+        subject,
+        message,
+      });
 
-    toast.success("Message sent successfully!", {
-      duration: 2000,
-    });
+      toast.success("Message sent successfully!", { duration: 2000 });
 
-    // Clear form
-    setFullName("");
-    setEmail("");
-    setSubject("");
-    setMessage("");
+      setFullName("");
+      setEmail("");
+      setSubject("");
+      setMessage("");
+    } catch (err) {
+      toast.error("Failed to send message. Please try again later.", { duration: 3000 });
+      console.error(err);
+    }
   };
 
   return (

@@ -43,7 +43,7 @@ export default function LoginPage() {
         className="w-full max-w-md lg:max-w-lg xl:max-w-xl flex flex-col items-center gap-8 lg:gap-10" 
         onSubmit={handleSubmit}
       >
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold font-Inter text-center">
+        <h1 className="text-3xl sm:text-4xl lg:text-4xl font-semibold font-Inter text-center">
           Login
         </h1>
 

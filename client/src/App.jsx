@@ -4,7 +4,6 @@ import Footer from "./components/Footer";
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Contact from "./pages/Contact";
-import AdminRoute from "./routes/AdminRoute";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import Shoppingcart from "./pages/Shoppingcart";
@@ -14,6 +13,8 @@ import Profile from "./pages/Profile";
 import Products from "./pages/Products";
 import Accountinfoedit from "./components/Accountinfoedit";
 import ThankYou from "./pages/ThankYou";
+import AdminRoute from "./routes/Adminroute";
+import AdminDashboard from "./pages/AdminDashboard";
 
 export default function App() {
   return (
@@ -25,7 +26,6 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/admin" element={<AdminRoute />} />
           <Route path="/login" element={<Login />} />
           <Route path="/Shoppingcart" element={<Shoppingcart />} />
           <Route path="/product/:id" element={<Productdetail />} />
@@ -34,6 +34,11 @@ export default function App() {
           <Route path="/Profile" element={<Profile />} />
           <Route path="/Accountinfoedit" element={<Accountinfoedit />} />
           <Route path="/ThankYou" element={<ThankYou />} />
+          <Route path="/admin" element={
+            <AdminRoute>
+              <AdminDashboard />
+            </AdminRoute>
+          } />
         </Routes>
       </main>
 

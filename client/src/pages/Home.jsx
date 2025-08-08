@@ -157,7 +157,7 @@ export default function Home() {
       <img 
         src="/Home page pictures/tablet.png" 
         alt="Ipad Air" 
-        className=" max-w-xs lg:max-w-xl h-full "
+        className=" max-w-xs md:object-scale-down md:h-1/2 lg:max-w-xl lg:h-3/4 h-full"
       />
     </div>
   </div>

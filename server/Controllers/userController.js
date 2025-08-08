@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 // Register a new user
 export const registerUser = async (req, res) => {
   try {
-    const { email, phone, password, country, address, zipcode, city, state } = req.body;
+    const { email, phone, password, country, address, zipcode, city, state, isAdmin } = req.body;
 
     const existingUser = await User.findOne({ email });
     if (existingUser)
@@ -22,6 +22,7 @@ export const registerUser = async (req, res) => {
       zipcode,
       city,
       state,
+      isAdmin: isAdmin || false, // only true if provided
     });
 
     await newUser.save();
@@ -35,19 +36,20 @@ export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // 1. Check if user exists
     const user = await User.findOne({ email });
     if (!user)
       return res.status(400).json({ message: "Invalid email or password." });
 
-    // 2. Check password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch)
       return res.status(400).json({ message: "Invalid email or password." });
 
-    // 3. Generate JWT token
+    // ✅ FIXED: Embed isAdmin in JWT token
     const token = jwt.sign(
-      { userId: user._id },
+      {
+        userId: user._id,
+        isAdmin: user.isAdmin, // ✅ required for middleware
+      },
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRES_IN || "1d" }
     );
@@ -64,9 +66,11 @@ export const loginUser = async (req, res) => {
         zipCode: user.zipcode,
         city: user.city,
         state: user.state,
+        isAdmin: user.isAdmin,
       },
     });
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
+

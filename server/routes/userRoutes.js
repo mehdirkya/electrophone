@@ -24,6 +24,7 @@ router.get("/profile", protect, async (req, res) => {
       city: user.city,
       state: user.state,
       zipCode: user.zipcode, // lowercase in DB, renamed here
+      isAdmin: user.isAdmin,
     });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
@@ -71,6 +72,7 @@ router.put("/profile", protect, async (req, res) => {
         city: user.city,
         state: user.state,
         zipCode: user.zipcode,
+        isAdmin: user.isAdmin,
       },
     });
   } catch (err) {
